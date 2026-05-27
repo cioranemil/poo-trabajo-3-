@@ -1,0 +1,180 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstdefinestyle{javastyle}{
+    language=Java,
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen}\itshape,
+    keywordstyle=\color{blue}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=t,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{lightgray}
+}
+\lstset{
+    style=javastyle,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+             {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+             {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+}
+
+\title{\textbf{Guía de Solución: Programación Orientada a Objetos} \\ \large Actividad 5: Interfaz Gráfica con Archivos (CRUD)}
+\author{Cristian}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Repositorio de GitHub}
+El código fuente de este proyecto se encuentra alojado en GitHub. 
+\newline
+\textbf{Enlace del repositorio:} \url{https://github.com/cioranemil/poo-trabajo-3-}
+
+\section{Enunciado: Actividad 5}
+Desarrollo de una Aplicación con Interfaz Gráfica (GUI) conectada a un archivo de datos local. El sistema debe contener un formulario provisto de botones funcionales para ejecutar de manera exitosa el patrón de persistencia \textbf{CRUD} (Create, Read, Update y Delete) sobre un archivo de texto secuencial usando Java.
+
+\section{Casos de Uso}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|p{3cm}|p{12cm}|}
+    \hline
+    \textbf{Caso de Uso} & \textbf{Administrar Biblioteca Personal (CRUD)} \\ \hline
+    \textbf{Actor} & Usuario / Lector \\ \hline
+    \textbf{Descripción} & El usuario utiliza la interfaz para llevar el inventario de libros leídos, modificarlos o borrarlos, guardándolos en el disco duro. \\ \hline
+    \textbf{Flujo Principal} & 
+    1. El usuario inicia la aplicación y visualiza su lista actual de libros en una tabla (\textbf{Read}).\newline
+    2. Ingresa un Título, Autor y un Estado en el formulario.\newline
+    3. Al hacer clic en ``Añadir'', el libro se escribe en \texttt{biblioteca.txt} (\textbf{Create}).\newline
+    4. El usuario selecciona un libro de la tabla y modifica su estado (ej. de ``Pendiente'' a ``Terminado''), haciendo clic en ``Actualizar'' (\textbf{Update}).\newline
+    5. El usuario selecciona un libro y oprime ``Eliminar'', borrándolo de la tabla y del archivo (\textbf{Delete}). \\ \hline
+    \textbf{Flujo Alternativo} & 
+    Si se intenta añadir un libro sin título o autor, o si el archivo está en uso por otro programa, el sistema levanta un \texttt{JOptionPane} avisando al usuario y denegando la transacción para proteger los datos. \\ \hline
+    \end{tabular}
+    \caption{Descripción del Caso de Uso Principal (Actividad 5)}
+\end{table}
+
+\section{Diagrama de Clases y Explicación}
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+        node distance=3cm,
+        umlbox/.style={draw, inner sep=0pt, align=left, font=\footnotesize}
+    ]
+    
+    \node[umlbox] (gui) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{VentanaBiblioteca}} \\
+        \hline
+        - txtTitulo, txtAutor: JTextField \\
+        - cbEstado: JComboBox \\
+        - tablaLibros: JTable \\
+        \hline
+        <<constructor>> VentanaBiblioteca() \\
+        - cargarTabla(): void \\
+        - crear(): void \\
+        - actualizar(): void \\
+        - borrar(): void
+        \end{tabular}
+    };
+    
+    \node[umlbox, right=2cm of gui] (backend) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{GestorArchivoBiblioteca}} \\
+        \hline
+        - FILE\_NAME: String \\
+        \hline
+        + leerLibros(): ArrayList \\
+        + crearLibro(): void \\
+        + actualizarLibro(): void \\
+        + borrarLibro(): void
+        \end{tabular}
+    };
+    
+    \draw[-stealth, dashed] (gui) -- node[above] {Consume} (backend);
+    
+    \end{tikzpicture}
+    \caption{Diagrama de clases del Módulo CRUD}
+\end{figure}
+
+\textbf{Explicación del diagrama de clases:}
+La solución implementa una clara separación de responsabilidades (Modelo-Vista). La clase \texttt{VentanaBiblioteca} es estrictamente una capa de presentación gráfica, maneja los clics de botones y la actualización de la tabla visual (\texttt{JTable}). Por su parte, \texttt{GestorArchivoBiblioteca} contiene la lógica de persistencia; encapsula por completo a la clase \texttt{RandomAccessFile} del API de Java, asegurando que las operaciones de lectura, escritura y renombrado de archivos temporales sean opacas para la interfaz de usuario.
+
+\section{Diagrama de Objetos}
+\begin{verbatim}
+[ uiBiblioteca: VentanaBiblioteca ] -.usa.-> [ backend: GestorArchivoBiblioteca ]
+\end{verbatim}
+
+\section{Ejecución del Programa}
+A continuación se muestra la interfaz principal del programa durante su ejecución:
+
+\begin{figure}[h]
+    \centering
+    % \includegraphics[width=0.6\textwidth]{interfaz_crud.png}
+    \vspace{4cm} 
+    \caption{Gestor de Biblioteca CRUD (reemplace la imagen)}
+\end{figure}
+
+\section{Solución: Lógica CRUD y Manejo de Archivos}
+A continuación, se presenta un extracto fundamental para comprender cómo el código sobreescribe información en archivos secuenciales (método Update).
+
+\begin{lstlisting}[caption={Clase GestorArchivoBiblioteca.java (Extracto)}]
+// UPDATE
+public static void actualizarLibro(String tituloBuscar, String nuevoTitulo, String nuevoAutor, String nuevoEstado) throws Exception {
+    File file = new File(FILE_NAME);
+    File temp = new File("temp.txt");
+    boolean encontrado = false;
+
+    // Abrimos el archivo original en lectura y un archivo temporal en escritura
+    try (RandomAccessFile raf = new RandomAccessFile(file, "rw");
+         RandomAccessFile tmpraf = new RandomAccessFile(temp, "rw")) {
+
+        String line;
+        while ((line = raf.readLine()) != null) {
+            String[] datos = line.split("!");
+            // Si es la linea que queremos actualizar, escribimos los datos nuevos
+            if (datos.length == 3 && datos[0].equalsIgnoreCase(tituloBuscar)) {
+                encontrado = true;
+                String newRecord = nuevoTitulo + "!" + nuevoAutor + "!" + nuevoEstado;
+                tmpraf.writeBytes(newRecord + System.lineSeparator());
+            } else {
+                // De lo contrario, copiamos la linea tal como estaba
+                tmpraf.writeBytes(line + System.lineSeparator());
+            }
+        }
+    }
+    // Reemplazamos el archivo viejo por el nuevo modificado
+    if (encontrado) {
+        file.delete();
+        temp.renameTo(file);
+    }
+}
+\end{lstlisting}
+
+\end{document}

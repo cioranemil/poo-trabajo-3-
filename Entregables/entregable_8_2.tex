@@ -1,0 +1,352 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstdefinestyle{javastyle}{
+    language=Java,
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen}\itshape,
+    keywordstyle=\color{blue}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=t,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{lightgray}
+}
+\lstset{
+    style=javastyle,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+             {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+             {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+}
+
+\title{\textbf{Guía de Solución: Programación Orientada a Objetos} \\ \large Actividad 3: Ejercicio 8.2 - Componentes Swing}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Repositorio de GitHub}
+El código fuente de este proyecto, tanto la lógica como la interfaz de usuario, se encuentra alojado en GitHub. 
+\newline
+\textbf{Enlace del repositorio:} \url{https://github.com/cioranemil/poo-trabajo-3-}
+
+\section{Enunciado: Notas}
+Se requiere desarrollar un programa con interfaz gráfica de usuario que genere una ventana donde se solicite el ingreso de cinco notas obtenidas por un estudiante.
+El programa debe calcular y mostrar en la parte inferior de la ventana los siguientes datos:
+\begin{itemize}
+    \item El promedio de notas ingresadas.
+    \item La desviación estándar de las notas ingresadas.
+    \item La mayor nota obtenida.
+    \item La menor nota obtenida.
+\end{itemize}
+
+\section{Casos de Uso}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|p{3cm}|p{12cm}|}
+    \hline
+    \textbf{Caso de Uso} & \textbf{Calcular Estadísticas de Notas} \\ \hline
+    \textbf{Actor} & Usuario / Estudiante \\ \hline
+    \textbf{Descripción} & El usuario ingresa las calificaciones de 5 evaluaciones para obtener el promedio, la desviación estándar y los valores extremos. \\ \hline
+    \textbf{Flujo Principal} & 
+    1. El usuario inicia la aplicación y visualiza la interfaz principal.\newline
+    2. El usuario introduce 5 valores numéricos en los campos de texto correspondientes.\newline
+    3. El usuario hace clic en el botón ``Calcular''.\newline
+    4. El sistema lee los valores, instancia el objeto \texttt{Notas} y calcula las métricas.\newline
+    5. El sistema muestra el Promedio, Desviación, Mayor y Menor nota en las etiquetas de resultados. \\ \hline
+    \textbf{Flujo Alternativo} & 
+    Si el usuario deja un campo vacío o ingresa texto en lugar de números, el sistema intercepta el error mediante validación o \texttt{NumberFormatException} y muestra un cuadro de diálogo (\texttt{JOptionPane}) advirtiendo del error. \\ \hline
+    \end{tabular}
+    \caption{Descripción del Caso de Uso Principal}
+\end{table}
+
+\section{Diagrama de Clases y Explicación}
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+        node distance=2cm,
+        umlbox/.style={draw, inner sep=0pt, align=left, font=\footnotesize}
+    ]
+    
+    \node[umlbox] (ventana) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{VentanaPrincipal}} \\
+        \hline
+        - contenedor: Container \\
+        - nota1, nota2, nota3, nota4, nota5: JLabel \\
+        - promedio, desviacion, mayor, menor: JLabel \\
+        - campoNota1, campoNota2, ...: JTextField \\
+        - calcular, limpiar: JButton \\
+        \hline
+        <<constructor>> VentanaPrincipal() \\
+        - inicio() \\
+        + actionPerformed(ActionEvent evento)
+        \end{tabular}
+    };
+    
+    \node[umlbox, left=1.5cm of ventana] (principal) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{Principal}} \\
+        \hline
+        \\
+        \hline
+        + main()
+        \end{tabular}
+    };
+    
+    \node[umlbox, right=1.5cm of ventana] (notas) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{Notas}} \\
+        \hline
+        $\sim$ listaNotas: double[] \\
+        \hline
+        <<constructor>> Notas() \\
+        + calcularPromedio(): double \\
+        + calcularDesviacion(): double \\
+        + calcularMenor(): double \\
+        + calcularMayor(): double
+        \end{tabular}
+    };
+    
+    \draw[-] (principal) -- node[above, near start] {1} node[above, near end] {1} (ventana);
+    \draw[-] (ventana) -- node[above, near start] {1} node[above, near end] {1} (notas);
+    
+    \end{tikzpicture}
+    \caption{Diagrama de clases del ejercicio 8.2}
+\end{figure}
+
+\textbf{Explicación del diagrama de clases:}
+Se ha definido un paquete denominado ``Notas'' que incluye un conjunto de clases. El punto de entrada al programa es la clase \texttt{Principal} que cuenta con el método main. La clase \texttt{Principal} está relacionada mediante una relación de asociación con la clase \texttt{VentanaPrincipal} que posee atributos privados para identificar los diferentes componentes gráficos de la ventana: un contenedor de componentes gráficos (\texttt{Container}), etiquetas (\texttt{JLabel}), campos de texto para ingreso de las notas (\texttt{JTextField}) y botones (\texttt{JButton}) para calcular diferentes métricas y borrar las notas. La clase \texttt{VentanaPrincipal} cuenta con un constructor y unos métodos para generar la ventana gráfica con sus componentes (\texttt{inicio}) y para gestionar los diferentes eventos surgidos al interactuar con esta ventana (\texttt{actionPerformed}).
+
+La clase \texttt{VentanaPrincipal} se conecta por medio de una relación de asociación con la clase \texttt{Notas}. La relación de asociación tiene una multiplicidad de uno en cada extremo, lo cual indica que la \texttt{VentanaPrincipal} se relaciona con una única instancia de \texttt{Notas} y, a su vez, \texttt{Notas} se relaciona con una sola \texttt{VentanaPrincipal}.
+
+La clase \texttt{Notas} tiene como un único atributo un array de notas de tipo \texttt{double}. Además, cuenta con un constructor y métodos para calcular la media, desviación estándar, la mayor nota y la menor nota.
+
+\section{Diagrama de Objetos}
+\begin{verbatim}
+[ miVentanaPrincipal: VentanaPrincipal ] ------------ [ notas: Notas ]
+\end{verbatim}
+
+\section{Ejecución del Programa}
+A continuación se muestra la interfaz principal del programa durante su ejecución:
+
+\begin{figure}[h]
+    \centering
+    % \includegraphics[width=0.6\textwidth]{interfaz_notas.png}
+    \vspace{4cm} 
+    \caption{Ventana principal de Gestión de Notas (reemplace la imagen)}
+\end{figure}
+
+\section{Solución: Código de la Interfaz de Usuario y Lógica}
+A continuación, se presenta la implementación final de las clases, abarcando la lógica matemática y la interfaz que permite usar el código.
+
+\subsection*{Clase: Notas (Lógica)}
+\begin{lstlisting}[caption={Clase Notas.java}]
+package Notas;
+
+public class Notas {
+    double[] listaNotas;
+
+    public Notas() {
+        listaNotas = new double[5];
+    }
+
+    double calcularPromedio() {
+        double suma = 0;
+        for (int i = 0; i < listaNotas.length; i++) {
+            suma += listaNotas[i];
+        }
+        return suma / listaNotas.length;
+    }
+
+    double calcularDesviacion() {
+        double prom = calcularPromedio();
+        double suma = 0;
+        for (int i = 0; i < listaNotas.length; i++) {
+            suma += Math.pow(listaNotas[i] - prom, 2);
+        }
+        return Math.sqrt(suma / listaNotas.length);
+    }
+
+    double calcularMenor() {
+        double menor = listaNotas[0];
+        for (int i = 1; i < listaNotas.length; i++) {
+            if (listaNotas[i] < menor) {
+                menor = listaNotas[i];
+            }
+        }
+        return menor;
+    }
+
+    double calcularMayor() {
+        double mayor = listaNotas[0];
+        for (int i = 1; i < listaNotas.length; i++) {
+            if (listaNotas[i] > mayor) {
+                mayor = listaNotas[i];
+            }
+        }
+        return mayor;
+    }
+}
+\end{lstlisting}
+
+\subsection*{Clase: VentanaPrincipal (Interfaz de Usuario)}
+\begin{lstlisting}[caption={Clase VentanaPrincipal.java}]
+package Notas;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+
+public class VentanaPrincipal extends JFrame implements ActionListener {
+    private Container contenedor;
+    private JLabel nota1, nota2, nota3, nota4, nota5, promedio, desviacion, mayor, menor;
+    private JTextField campoNota1, campoNota2, campoNota3, campoNota4, campoNota5;
+    private JButton calcular, limpiar;
+
+    public VentanaPrincipal() {
+        inicio();
+        setTitle("Notas - Actividad 3");
+        setSize(280, 390);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+    }
+
+    private void inicio() {
+        contenedor = getContentPane();
+        contenedor.setLayout(null);
+
+        nota1 = new JLabel("Nota 1:"); nota1.setBounds(20, 20, 135, 23);
+        campoNota1 = new JTextField(); campoNota1.setBounds(105, 20, 145, 23);
+
+        nota2 = new JLabel("Nota 2:"); nota2.setBounds(20, 50, 135, 23);
+        campoNota2 = new JTextField(); campoNota2.setBounds(105, 50, 145, 23);
+
+        nota3 = new JLabel("Nota 3:"); nota3.setBounds(20, 80, 135, 23);
+        campoNota3 = new JTextField(); campoNota3.setBounds(105, 80, 145, 23);
+
+        nota4 = new JLabel("Nota 4:"); nota4.setBounds(20, 110, 135, 23);
+        campoNota4 = new JTextField(); campoNota4.setBounds(105, 110, 145, 23);
+
+        nota5 = new JLabel("Nota 5:"); nota5.setBounds(20, 140, 135, 23);
+        campoNota5 = new JTextField(); campoNota5.setBounds(105, 140, 145, 23);
+
+        calcular = new JButton("Calcular");
+        calcular.setBounds(20, 175, 105, 23);
+        calcular.addActionListener(this);
+
+        limpiar = new JButton("Limpiar");
+        limpiar.setBounds(145, 175, 105, 23);
+        limpiar.addActionListener(this);
+
+        promedio = new JLabel("Promedio = "); promedio.setBounds(20, 215, 250, 23);
+        desviacion = new JLabel("Desviación estándar = "); desviacion.setBounds(20, 245, 250, 23);
+        mayor = new JLabel("Valor mayor = "); mayor.setBounds(20, 275, 250, 23);
+        menor = new JLabel("Valor menor = "); menor.setBounds(20, 305, 250, 23);
+
+        contenedor.add(nota1); contenedor.add(campoNota1);
+        contenedor.add(nota2); contenedor.add(campoNota2);
+        contenedor.add(nota3); contenedor.add(campoNota3);
+        contenedor.add(nota4); contenedor.add(campoNota4);
+        contenedor.add(nota5); contenedor.add(campoNota5);
+        contenedor.add(calcular); contenedor.add(limpiar);
+        contenedor.add(promedio); contenedor.add(desviacion);
+        contenedor.add(mayor); contenedor.add(menor);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent evento) {
+        if (evento.getSource() == calcular) {
+            // Solución a los ejercicios propuestos: Validar obligatoriedad
+            if (campoNota1.getText().trim().isEmpty() ||
+                campoNota2.getText().trim().isEmpty() ||
+                campoNota3.getText().trim().isEmpty() ||
+                campoNota4.getText().trim().isEmpty() ||
+                campoNota5.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debe rellenar las 5 notas obligatoriamente.",
+                                              "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            try {
+                Notas notas = new Notas();
+                notas.listaNotas[0] = Double.parseDouble(campoNota1.getText());
+                notas.listaNotas[1] = Double.parseDouble(campoNota2.getText());
+                notas.listaNotas[2] = Double.parseDouble(campoNota3.getText());
+                notas.listaNotas[3] = Double.parseDouble(campoNota4.getText());
+                notas.listaNotas[4] = Double.parseDouble(campoNota5.getText());
+
+                promedio.setText("Promedio = " + String.format("%.2f", notas.calcularPromedio()));
+                desviacion.setText("Desviación estándar = " + String.format("%.2f", notas.calcularDesviacion()));
+                mayor.setText("Valor mayor = " + notas.calcularMayor());
+                menor.setText("Valor menor = " + notas.calcularMenor());
+            } catch (NumberFormatException ex) {
+                // Solución a los ejercicios propuestos: Validar datos no numéricos
+                JOptionPane.showMessageDialog(this, "Error: Ingrese valores numéricos válidos.",
+                                              "Error de Formato", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        if (evento.getSource() == limpiar) {
+            campoNota1.setText(""); campoNota2.setText("");
+            campoNota3.setText(""); campoNota4.setText("");
+            campoNota5.setText("");
+            promedio.setText("Promedio = ");
+            desviacion.setText("Desviación estándar = ");
+            mayor.setText("Valor mayor = ");
+            menor.setText("Valor menor = ");
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection*{Clase: Principal}
+\begin{lstlisting}[caption={Clase Principal.java}]
+package Notas;
+
+public class Principal {
+    public static void main(String[] args) {
+        VentanaPrincipal xanela = new VentanaPrincipal();
+        xanela.setVisible(true);
+    }
+}
+\end{lstlisting}
+
+\section{Resolución de Ejercicios Propuestos}
+El material de estudio propone dos tareas adicionales:
+\begin{enumerate}
+    \item \textit{Modificar el programa para generar mensajes de alerta cuando se ingresen datos que no sean numéricos.}
+    \item \textit{Es obligatorio ingresar las cinco notas, se genera un mensaje de alerta cuando una nota no ha sido ingresada.}
+\end{enumerate}
+\textbf{Solución implementada:} Como se puede observar en el código de \texttt{VentanaPrincipal.java}, ambas funcionalidades han sido agregadas exitosamente. El bloque \texttt{if (.isEmpty())} evita procesar si hay celdas vacías, lanzando un \texttt{JOptionPane.WARNING\_MESSAGE}. Por otro lado, la captura de la excepción \texttt{NumberFormatException} intercepta cualquier letra o símbolo no válido introducido en los campos de notas.
+
+\end{document}

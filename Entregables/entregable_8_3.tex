@@ -1,0 +1,534 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstdefinestyle{javastyle}{
+    language=Java,
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen}\itshape,
+    keywordstyle=\color{blue}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=t,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{lightgray}
+}
+\lstset{
+    style=javastyle,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+             {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+             {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+}
+
+\title{\textbf{Guía de Solución: Programación Orientada a Objetos} \\ \large Actividad 3: Ejercicio 8.3 - Gestión de Eventos}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Repositorio de GitHub}
+El código fuente de este proyecto se encuentra alojado en GitHub. 
+\newline
+\textbf{Enlace del repositorio:} \url{https://github.com/cioranemil/poo-trabajo-3-}
+
+\section{Enunciado: Figuras Geométricas}
+Se requiere desarrollar un programa con interfaz gráfica de usuario que permita calcular el volumen y superficie de varias figuras geométricas. Las figuras geométricas son el cilindro, la esfera y la pirámide.
+\begin{itemize}
+    \item Para el cilindro se solicitan su radio y altura.
+    \item Para la esfera, su radio.
+    \item Para la pirámide, su base, altura y apotema.
+\end{itemize}
+Una vez ingresados estos datos, el programa calcula el volumen y superficie de cada figura. Para desarrollar el programa se debe crear una jerarquía de clases para las diferentes figuras.
+
+\section{Casos de Uso}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|p{3cm}|p{12cm}|}
+    \hline
+    \textbf{Caso de Uso} & \textbf{Calcular Volumen y Superficie} \\ \hline
+    \textbf{Actor} & Usuario / Estudiante \\ \hline
+    \textbf{Descripción} & El usuario selecciona una figura tridimensional en el menú principal y realiza los cálculos de volumen y superficie ingresando sus medidas básicas. \\ \hline
+    \textbf{Flujo Principal} & 
+    1. El usuario visualiza el Menú Principal (\texttt{VentanaPrincipal}).\newline
+    2. Hace clic en el botón de la figura deseada (Ej. Cilindro).\newline
+    3. Se abre la ventana específica.\newline
+    4. Introduce las dimensiones y presiona ``Calcular''.\newline
+    5. El sistema procesa los datos y muestra el Volumen y Superficie. \\ \hline
+    \end{tabular}
+    \caption{Descripción del Caso de Uso}
+\end{table}
+
+\section{Diagrama de Clases y Explicación}
+
+\begin{figure}[h]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[
+        node distance=1.5cm and 0.5cm,
+        umlbox/.style={draw, inner sep=0pt, align=left, font=\footnotesize}
+    ]
+    
+    \node[umlbox, align=center] (figura) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{FiguraGeometrica}} \\
+        \hline
+        - volumen: double \\
+        - superficie: double \\
+        \hline
+        + setVolumen() \\
+        + setSuperficie() \\
+        + getVolumen() \\
+        + getSuperficie()
+        \end{tabular}
+    };
+    
+    \node[umlbox, below=1.5cm of figura] (esfera) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{Esfera}} \\
+        \hline
+        - radio: double \\
+        \hline
+        + Esfera()
+        \end{tabular}
+    };
+    
+    \node[umlbox, left=0.5cm of esfera] (cilindro) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{Cilindro}} \\
+        \hline
+        - radio: double \\
+        - altura: double \\
+        \hline
+        + Cilindro()
+        \end{tabular}
+    };
+    
+    \node[umlbox, right=0.5cm of esfera] (piramide) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{Piramide}} \\
+        \hline
+        - base: double \\
+        - altura: double \\
+        - apotema: double \\
+        \hline
+        + Piramide()
+        \end{tabular}
+    };
+    
+    \draw[-{Latex[open,length=4mm,width=4mm]}] (cilindro.north) -- +(0,0.5) -| (figura.south);
+    \draw[-{Latex[open,length=4mm,width=4mm]}] (esfera.north) -- (figura.south);
+    \draw[-{Latex[open,length=4mm,width=4mm]}] (piramide.north) -- +(0,0.5) -| (figura.south);
+    
+    \node[umlbox, below=1.5cm of esfera] (vesfera) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{VentanaEsfera}} \\
+        \end{tabular}
+    };
+    \node[umlbox, below=1.5cm of cilindro] (vcilindro) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{VentanaCilindro}} \\
+        \end{tabular}
+    };
+    \node[umlbox, below=1.5cm of piramide] (vpiramide) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{VentanaPiramide}} \\
+        \end{tabular}
+    };
+    
+    \draw[-] (vcilindro) -- node[left] {1} node[above, near end] {1} (cilindro);
+    \draw[-] (vesfera) -- node[left] {1} node[above, near end] {1} (esfera);
+    \draw[-] (vpiramide) -- node[left] {1} node[above, near end] {1} (piramide);
+    
+    \node[umlbox, below=1.5cm of vesfera] (vprincipal) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{VentanaPrincipal}} \\
+        \end{tabular}
+    };
+    
+    \draw[-] (vprincipal.north) -- +(0,0.5) -| node[above, near end] {1} (vcilindro.south);
+    \draw[-] (vprincipal.north) -- node[left, near start] {1} node[left, near end] {1} (vesfera.south);
+    \draw[-] (vprincipal.north) -- +(0,0.5) -| node[above, near end] {1} (vpiramide.south);
+    
+    \node[umlbox, below=1cm of vprincipal] (principal) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{Principal}} \\
+        \end{tabular}
+    };
+    
+    \draw[-] (principal) -- node[left] {1} node[left, near end] {1} (vprincipal);
+    
+    \end{tikzpicture}
+    }
+    \caption{Diagrama de clases del ejercicio 8.3}
+\end{figure}
+
+\textbf{Explicación del diagrama de clases:}
+Se ha definido un paquete denominado ``Figuras'' que incluye un conjunto de clases. El punto de entrada al programa es la clase \texttt{Principal} que cuenta con el método \texttt{main}. La clase \texttt{Principal} está relacionada con la clase \texttt{VentanaPrincipal} que posee atributos privados para identificar tres botones que abrirán las ventanas respectivas. La clase \texttt{VentanaPrincipal} está conectada por medio de relaciones de asociación con las clases \texttt{VentanaCilindro}, \texttt{VentanaEsfera} y \texttt{VentanaPiramide}. 
+
+Cada ventana específica se conecta con su clase lógica (ej. \texttt{VentanaCilindro} crea un único objeto \texttt{Cilindro}). Finalmente, las clases \texttt{Cilindro}, \texttt{Esfera} y \texttt{Piramide} son subclases de \texttt{FiguraGeometrica}, la cual es la clase padre que define atributos compartidos de volumen y superficie.
+
+\section{Diagrama de Objetos}
+\begin{verbatim}
+[ miVentanaPrincipal: VentanaPrincipal ]
+      |
+      +---- [ cilindro: VentanaCilindro ] ---- [ cilindro: Cilindro ]
+      |
+      +---- [ esfera: VentanaEsfera ] -------- [ esfera: Esfera ]
+      |
+      +---- [ piramide: VentanaPiramide ] ---- [ piramide: Piramide ]
+\end{verbatim}
+
+\section{Ejecución del Programa}
+A continuación se muestran los espacios para añadir las capturas de las interfaces gráficas.
+
+\begin{figure}[h]
+    \centering
+    % \includegraphics[width=0.4\textwidth]{ventana_principal.png}
+    \vspace{2cm} 
+    \caption{a) Ventana Principal}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    % \includegraphics[width=0.3\textwidth]{ventana_cilindro.png}
+    \vspace{2cm} 
+    \caption{b) Cilindro}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    % \includegraphics[width=0.3\textwidth]{ventana_esfera.png}
+    \vspace{2cm} 
+    \caption{c) Esfera}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    % \includegraphics[width=0.3\textwidth]{ventana_piramide.png}
+    \vspace{2cm} 
+    \caption{d) Pirámide}
+\end{figure}
+
+\newpage
+\section{Solución: Código de la Interfaz de Usuario y Lógica}
+A continuación se presenta todo el código desarrollado para la lógica jerárquica y las interfaces gráficas interconectadas.
+
+\subsection*{Clase: FiguraGeometrica}
+\begin{lstlisting}[caption={Clase FiguraGeometrica.java}]
+package Figuras;
+
+public class FiguraGeometrica {
+    private double volumen;
+    private double superficie;
+
+    public void setVolumen(double volumen) { this.volumen = volumen; }
+    public void setSuperficie(double superficie) { this.superficie = superficie; }
+    public double getVolumen() { return this.volumen; }
+    public double getSuperficie() { return this.superficie; }
+}
+\end{lstlisting}
+
+\subsection*{Clase: Cilindro}
+\begin{lstlisting}[caption={Clase Cilindro.java}]
+package Figuras;
+
+public class Cilindro extends FiguraGeometrica {
+    private double radio;
+    private double altura;
+
+    public Cilindro(double radio, double altura) {
+        this.radio = radio;
+        this.altura = altura;
+        setVolumen(Math.PI * altura * Math.pow(radio, 2.0));
+        setSuperficie((2.0 * Math.PI * radio * altura) + (2.0 * Math.PI * Math.pow(radio, 2.0)));
+    }
+}
+\end{lstlisting}
+
+\subsection*{Clase: Esfera}
+\begin{lstlisting}[caption={Clase Esfera.java}]
+package Figuras;
+
+public class Esfera extends FiguraGeometrica {
+    private double radio;
+
+    public Esfera(double radio) {
+        this.radio = radio;
+        setVolumen((4.0 / 3.0) * Math.PI * Math.pow(radio, 3.0));
+        setSuperficie(4.0 * Math.PI * Math.pow(radio, 2.0));
+    }
+}
+\end{lstlisting}
+
+\subsection*{Clase: Piramide}
+\begin{lstlisting}[caption={Clase Piramide.java}]
+package Figuras;
+
+public class Piramide extends FiguraGeometrica {
+    private double base;
+    private double altura;
+    private double apotema;
+
+    public Piramide(double base, double altura, double apotema) {
+        this.base = base;
+        this.altura = altura;
+        this.apotema = apotema;
+        setVolumen((Math.pow(base, 2.0) * altura) / 3.0);
+        setSuperficie(Math.pow(base, 2.0) + (2.0 * base * apotema));
+    }
+}
+\end{lstlisting}
+
+\subsection*{Clase: VentanaCilindro}
+\begin{lstlisting}[caption={Clase VentanaCilindro.java}]
+package Figuras;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+
+public class VentanaCilindro extends JFrame implements ActionListener {
+    private Container contenedor;
+    private JLabel radio, altura, volumen, superficie;
+    private JTextField campoRadio, campoAltura;
+    private JButton calcular;
+
+    public VentanaCilindro() {
+        contenedor = getContentPane();
+        contenedor.setLayout(null);
+        setTitle("Cilindro");
+        setSize(280, 210);
+        setLocationRelativeTo(null);
+        setResizable(false);
+
+        radio = new JLabel("Radio (cms):"); radio.setBounds(20, 20, 135, 23);
+        campoRadio = new JTextField(); campoRadio.setBounds(100, 20, 135, 23);
+
+        altura = new JLabel("Altura (cms):"); altura.setBounds(20, 50, 135, 23);
+        campoAltura = new JTextField(); campoAltura.setBounds(100, 50, 135, 23);
+
+        calcular = new JButton("Calcular"); calcular.setBounds(100, 80, 135, 23);
+        calcular.addActionListener(this);
+
+        volumen = new JLabel("Volumen (cm3):"); volumen.setBounds(20, 110, 230, 23);
+        superficie = new JLabel("Superficie (cm2):"); superficie.setBounds(20, 140, 230, 23);
+
+        contenedor.add(radio); contenedor.add(campoRadio);
+        contenedor.add(altura); contenedor.add(campoAltura);
+        contenedor.add(calcular); contenedor.add(volumen); contenedor.add(superficie);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        try {
+            double r = Double.parseDouble(campoRadio.getText());
+            double a = Double.parseDouble(campoAltura.getText());
+            Cilindro cilindro = new Cilindro(r, a);
+            volumen.setText("Volumen (cm3): " + String.format("%.2f", cilindro.getVolumen()));
+            superficie.setText("Superficie (cm2): " + String.format("%.2f", cilindro.getSuperficie()));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Campo nulo o error de formato",
+                                          "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection*{Clase: VentanaEsfera}
+\begin{lstlisting}[caption={Clase VentanaEsfera.java}]
+package Figuras;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+
+public class VentanaEsfera extends JFrame implements ActionListener {
+    private Container contenedor;
+    private JLabel radio, volumen, superficie;
+    private JTextField campoRadio;
+    private JButton calcular;
+
+    public VentanaEsfera() {
+        contenedor = getContentPane();
+        contenedor.setLayout(null);
+        setTitle("Esfera");
+        setSize(280, 200);
+        setLocationRelativeTo(null);
+        setResizable(false);
+
+        radio = new JLabel("Radio (cms):"); radio.setBounds(20, 20, 135, 23);
+        campoRadio = new JTextField(); campoRadio.setBounds(100, 20, 135, 23);
+
+        calcular = new JButton("Calcular"); calcular.setBounds(100, 50, 135, 23);
+        calcular.addActionListener(this);
+
+        volumen = new JLabel("Volumen (cm3):"); volumen.setBounds(20, 90, 230, 23);
+        superficie = new JLabel("Superficie (cm2):"); superficie.setBounds(20, 120, 230, 23);
+
+        contenedor.add(radio); contenedor.add(campoRadio);
+        contenedor.add(calcular); contenedor.add(volumen); contenedor.add(superficie);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent evento) {
+        try {
+            double r = Double.parseDouble(campoRadio.getText());
+            Esfera esfera = new Esfera(r);
+            volumen.setText("Volumen (cm3): " + String.format("%.2f", esfera.getVolumen()));
+            superficie.setText("Superficie (cm2): " + String.format("%.2f", esfera.getSuperficie()));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Campo nulo o error de formato",
+                                          "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection*{Clase: VentanaPiramide}
+\begin{lstlisting}[caption={Clase VentanaPiramide.java}]
+package Figuras;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+
+public class VentanaPiramide extends JFrame implements ActionListener {
+    private Container contenedor;
+    private JLabel base, altura, apotema, volumen, superficie;
+    private JTextField campoBase, campoAltura, campoApotema;
+    private JButton calcular;
+
+    public VentanaPiramide() {
+        contenedor = getContentPane();
+        contenedor.setLayout(null);
+        setTitle("Piramide");
+        setSize(280, 240);
+        setLocationRelativeTo(null);
+        setResizable(false);
+
+        base = new JLabel("Base (cms):"); base.setBounds(20, 20, 135, 23);
+        campoBase = new JTextField(); campoBase.setBounds(120, 20, 135, 23);
+
+        altura = new JLabel("Altura (cms):"); altura.setBounds(20, 50, 135, 23);
+        campoAltura = new JTextField(); campoAltura.setBounds(120, 50, 135, 23);
+
+        apotema = new JLabel("Apotema (cms):"); apotema.setBounds(20, 80, 135, 23);
+        campoApotema = new JTextField(); campoApotema.setBounds(120, 80, 135, 23);
+
+        calcular = new JButton("Calcular"); calcular.setBounds(120, 110, 135, 23);
+        calcular.addActionListener(this);
+
+        volumen = new JLabel("Volumen (cm3):"); volumen.setBounds(20, 140, 230, 23);
+        superficie = new JLabel("Superficie (cm2):"); superficie.setBounds(20, 170, 230, 23);
+
+        contenedor.add(base); contenedor.add(campoBase);
+        contenedor.add(altura); contenedor.add(campoAltura);
+        contenedor.add(apotema); contenedor.add(campoApotema);
+        contenedor.add(calcular); contenedor.add(volumen); contenedor.add(superficie);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        try {
+            double b = Double.parseDouble(campoBase.getText());
+            double a = Double.parseDouble(campoAltura.getText());
+            double ap = Double.parseDouble(campoApotema.getText());
+            Piramide piramide = new Piramide(b, a, ap);
+            volumen.setText("Volumen (cm3): " + String.format("%.2f", piramide.getVolumen()));
+            superficie.setText("Superficie (cm2): " + String.format("%.2f", piramide.getSuperficie()));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Campo nulo o error de formato",
+                                          "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection*{Clase: VentanaPrincipal}
+\begin{lstlisting}[caption={Clase VentanaPrincipal.java}]
+package Figuras;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+
+public class VentanaPrincipal extends JFrame implements ActionListener {
+    private Container contenedor;
+    private JButton cilindro, esfera, piramide;
+
+    public VentanaPrincipal() {
+        contenedor = getContentPane();
+        contenedor.setLayout(null);
+        setTitle("Figuras Geometricas");
+        setSize(350, 160);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        cilindro = new JButton("Cilindro"); cilindro.setBounds(20, 50, 90, 23);
+        cilindro.addActionListener(this);
+
+        esfera = new JButton("Esfera"); esfera.setBounds(130, 50, 90, 23);
+        esfera.addActionListener(this);
+
+        piramide = new JButton("Piramide"); piramide.setBounds(240, 50, 90, 23);
+        piramide.addActionListener(this);
+
+        contenedor.add(cilindro); contenedor.add(esfera); contenedor.add(piramide);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent evento) {
+        if (evento.getSource() == esfera) {
+            new VentanaEsfera().setVisible(true);
+        }
+        if (evento.getSource() == cilindro) {
+            new VentanaCilindro().setVisible(true);
+        }
+        if (evento.getSource() == piramide) {
+            new VentanaPiramide().setVisible(true);
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection*{Clase: Principal}
+\begin{lstlisting}[caption={Clase Principal.java}]
+package Figuras;
+
+public class Principal {
+    public static void main(String[] args) {
+        VentanaPrincipal menu = new VentanaPrincipal();
+        menu.setVisible(true);
+        menu.setResizable(false);
+    }
+}
+\end{lstlisting}
+
+\end{document}

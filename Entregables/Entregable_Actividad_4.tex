@@ -1,0 +1,176 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstdefinestyle{javastyle}{
+    language=Java,
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen}\itshape,
+    keywordstyle=\color{blue}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=t,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{lightgray}
+}
+\lstset{
+    style=javastyle,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+             {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+             {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+}
+
+\title{\textbf{Guía de Solución: Programación Orientada a Objetos} \\ \large Actividad 4: Manejo de Excepciones y Archivos}
+\author{Cristian}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Repositorio de GitHub}
+El código fuente de este proyecto, integrando las Actividades 3, 4 y 5 mediante un menú gráfico unificado, se encuentra alojado en GitHub. 
+\newline
+\textbf{Enlace del repositorio:} \url{https://github.com/cioranemil/poo-trabajo-3-}
+
+\section{Enunciado: Actividad 4}
+Se requiere desarrollar una aplicación gráfica interactiva que contenga y dé solución a 5 ejercicios específicos planteados en el libro guía sobre el manejo de excepciones y la lectura de flujos de datos (archivos). El programa debe asegurar que cualquier error en la lógica, entrada de datos o gestión de archivos sea controlado elegantemente sin interrumpir la ejecución, empleando bloques \texttt{try/catch/finally} y directivas \texttt{throw}.
+
+\section{Casos de Uso}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|p{3cm}|p{12cm}|}
+    \hline
+    \textbf{Caso de Uso} & \textbf{Gestión de Excepciones Interactivas} \\ \hline
+    \textbf{Actor} & Usuario \\ \hline
+    \textbf{Descripción} & El usuario interactúa con la interfaz para forzar diversos errores lógicos o de validación, observando cómo el sistema reacciona y controla la eventualidad. \\ \hline
+    \textbf{Flujo Principal} & 
+    1. El usuario inicia la aplicación y selecciona ``Actividad 4 - Excepciones''.\newline
+    2. En el menú, elige uno de los ejercicios (Ej: Probar try/catch o Validar Vendedor).\newline
+    3. El usuario ingresa datos intencionalmente erróneos (ej. letras donde van números o edad menor a 18).\newline
+    4. El sistema ejecuta el bloque \texttt{try}.\newline
+    5. El sistema detecta la falla, salta al bloque \texttt{catch} o lanza un \texttt{throw}, e informa al usuario del problema. \\ \hline
+    \textbf{Flujo Alternativo} & 
+    Si el usuario ingresa datos correctos (ej. Vendedor mayor de 18 años), la aplicación confirma el éxito de la operación demostrando el funcionamiento estable del programa. \\ \hline
+    \end{tabular}
+    \caption{Descripción del Caso de Uso Principal (Actividad 4)}
+\end{table}
+
+\section{Diagrama de Clases y Explicación}
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+        node distance=2.5cm,
+        umlbox/.style={draw, inner sep=0pt, align=left, font=\footnotesize}
+    ]
+    
+    \node[umlbox] (menu) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{VentanaPrincipalActividad4}} \\
+        \hline
+        - btnExcepciones: JButton \\
+        - btnVendedor: JButton \\
+        - btnMatematicas: JButton \\
+        \hline
+        <<constructor>> VentanaPrincipalActividad4() \\
+        - abrir(JFrame ventana)
+        \end{tabular}
+    };
+    
+    \node[umlbox, below left=1.5cm and -1cm of menu] (excepcion) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{VentanaExcepciones}} \\
+        \hline
+        - areaTexto: JTextArea \\
+        \hline
+        + ejecutarSimulacion() \\
+        \end{tabular}
+    };
+    
+    \node[umlbox, below right=1.5cm and -1cm of menu] (vendedor) {
+        \begin{tabular}{l}
+        \multicolumn{1}{c}{\textbf{Vendedor}} \\
+        \hline
+        - nombre: String \\
+        - apellidos: String \\
+        - edad: int \\
+        \hline
+        <<constructor>> Vendedor(...) \textit{throws Exception}
+        \end{tabular}
+    };
+    
+    \draw[-stealth] (menu) -- node[left, near end] {Abre} (excepcion);
+    \draw[-stealth] (menu) -- node[right, near end] {Crea obj} (vendedor);
+    
+    \end{tikzpicture}
+    \caption{Diagrama de clases parcial de la Actividad 4}
+\end{figure}
+
+\textbf{Explicación del diagrama de clases:}
+Se presenta un diagrama simplificado que ilustra el patrón modular usado. La clase \texttt{VentanaPrincipalActividad4} funge como despachador. Está asociada con múltiples submódulos como \texttt{VentanaExcepciones} (para probar bloques try/catch mediante una simulación de consola visual en un \texttt{JTextArea}) y a clases lógicas independientes como \texttt{Vendedor}, cuyo constructor está diseñado específicamente para lanzar excepciones (\texttt{IllegalArgumentException}) si no se cumplen las reglas de negocio (ser mayor de 18 años).
+
+\section{Diagrama de Objetos}
+\begin{verbatim}
+[ menuAct4: VentanaPrincipalActividad4 ] ------------ [ uiExcepcion: VentanaExcepciones ]
+\end{verbatim}
+
+\section{Ejecución del Programa}
+A continuación se muestra la interfaz principal del programa durante su ejecución:
+
+\begin{figure}[h]
+    \centering
+    % \includegraphics[width=0.6\textwidth]{interfaz_act4.png}
+    \vspace{4cm} 
+    \caption{Interfaz gráfica de la Actividad 4 probando excepciones (reemplace la imagen)}
+\end{figure}
+
+\section{Solución: Código de Muestra (Gestión de Errores)}
+Se adjunta el extracto más importante de la validación del constructor de la clase \texttt{Vendedor}, ilustrando el lanzamiento intencional de excepciones para cumplir el objetivo del ejercicio 6.5.
+
+\begin{lstlisting}[caption={Clase Vendedor.java}]
+package Vendedor;
+
+public class Vendedor {
+    private String nombre;
+    private String apellidos;
+    private int edad;
+
+    public Vendedor(String nombre, String apellidos, int edad) {
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        
+        // Objetivo: Generar y lanzar excepcion controlada si la regla falla
+        if (edad < 18) {
+            throw new IllegalArgumentException("El vendedor debe ser mayor de edad.");
+        }
+        
+        this.edad = edad;
+    }
+}
+\end{lstlisting}
+
+\end{document}

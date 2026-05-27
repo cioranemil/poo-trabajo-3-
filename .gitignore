@@ -1,0 +1,41 @@
+# Compiled class file
+*.class
+bin/
+out/
+build/
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files (we exclude them to keep the repo clean, 
+# although we manually included Ejecutable_Proyecto.jar for the professor)
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Except our specific executable for delivery
+!Ejecutable_Proyecto.jar
