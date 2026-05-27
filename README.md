@@ -1,4 +1,4 @@
-# Proyecto Final - Programación Orientada a Objetos
+# Proyecto  - Programación Orientada a Objetos
 
 Este repositorio contiene la entrega final del curso de Programación Orientada a Objetos (Actividades 3, 4 y 5) integradas en una única aplicación con Interfaz Gráfica (GUI) construida en Java Swing.
 
